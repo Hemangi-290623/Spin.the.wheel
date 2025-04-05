@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1575505586569-646b2ca898fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Times New Roman', serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            position: relative;
+            z-index: 100;
+            padding-top: 20px;
+            color: white;
+            background-color: rgba(139, 69, 19, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 3px solid #f4d03f;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 2.5em;
+            color: #f4d03f;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .center-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #f4d03f, #f39c12);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            border: 3px solid #8b4513;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6), inset 0 0 5px rgba(255, 255, 255, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #8b4513;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-right: 40px solid #f4d03f;
+            position: absolute;
+            top: 50%;
+            right: -240%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .wheel {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 20px;
+            background: radial-gradient(circle, #fff3e0, #e5a54b);
+            padding: 20px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 5px solid #8b4513;
+        }
+
+        .score {
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Georgia', serif;
+            background-color: rgba(254, 245, 231, 0.9);
+            padding: 15px 25px;
+            border: 3px solid #8b4513;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .score span {
+            font-size: 1.5em;
+            color: #8b4513;
+            font-weight: bold;
+        }
+
+        #questionModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fef5e7;
+            padding: 30px;
+            color: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+            border: 3px solid #8b4513;
+            font-family: 'Times New Roman', serif;
+        }
+
+        #questionModal h2 {
+            margin: 0 0 15px;
+            font-size: 1.8em;
+            color: #8b4513;
+            border-bottom: 2px solid #8b4513;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        #questionModal p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        #questionModal input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', serif;
+        }
+
+        #questionModal button {
+            padding: 12px 25px;
+            background-color: #8b4513;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Georgia', serif;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        #questionModal button:hover {
+            background-color: #a0522d;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        #winner {
+            font-family: 'Georgia', serif;
+            font-size: 1.5em;
+            color: #f4d03f;
+            background-color: rgba(139, 69, 19, 0.9);
+            padding: 15px 25px;
+            border: 2px solid #f4d03f;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-top: 15px;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fef5e7;
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border: 3px solid #8b4513;
+            text-align: center;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2em;
+            z-index: 1001;
+            max-width: 80%;
+        }
+
+        .alert button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: #8b4513;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        .alert button:hover {
+            background-color: #a0522d;
+        }
+
+        .filter-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background-color: rgba(254, 245, 231, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #8b4513;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #8b4513;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+            font-size: 1.1em;
+        }
+
+        .filter-container select {
+            padding: 10px 15px;
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            background-color: #fef5e7;
+            color: #333;
+            font-family: 'Times New Roman', serif;
+            font-size: 1em;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .filter-container select:focus {
+            outline: none;
+            border-color: #a0522d;
+        }
+
+        .constitution-icon {
+            font-size: 2em;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #fff;
+            text-align: center;
+            font-size: 0.9em;
+            background-color: rgba(139, 69, 19, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 800px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="filter-container">
+        <label for="age-filter">Filter by Category:</label>
+        <select id="age-filter" onchange="updateWheelItems()">
+            <option value="all">All Articles</option>
+            <option value="children">Children's Rights</option>
+            <option value="women">Women's Rights</option>
+            <option value="young-adults">Youth Rights</option>
+            <option value="fundamental">Fundamental Rights</option>
+            <option value="duties">Fundamental Duties</option>
+        </select>
+    </div>
+
+    <div class="header">
+        <h1>🇮🇳 Constitution Wheel of India 🇮🇳</h1>
+        <p>Spin to learn about your constitutional rights and duties</p>
+    </div>
+    
+    <div class="wheel">
+        <canvas id="canvas" width="500" height="500"></canvas>
+        <div class="center-circle" onclick="spin()">
+            SPIN<br>WHEEL
+            <div class="triangle"></div>
+        </div>
+    </div>
+
+    <div id="winner">Spin the wheel to learn about an article!</div>
+
+    <div class="score">
+        <p>Your Constitutional Knowledge Score: <span id="score">0</span></p>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div id="questionModal">
+        <h2>Constitutional Question</h2>
+        <p id="question"></p>
+        <input type="text" id="userAnswer" placeholder="Type your answer here..." />
+        <button onclick="submitAnswer()">Submit Answer</button>
+    </div>
+
+    <div class="alert" id="alertBox">
+        <p id="alertMessage"></p>
+        <button onclick="closeAlert()">Continue</button>
+    </div>
+
+    <div class="footer">
+        "The Constitution is not a mere lawyers' document, it is a vehicle of Life, and its spirit is always the spirit of Age." - Dr. B.R. Ambedkar
+    </div>
+
+    <script>
+        // Enhanced article database with more articles in each category
+        const articleDatabase = {
+            all: [
+                "Article 14: Equality before law and equal protection of laws",
+                "Article 15: Prohibition of discrimination on grounds of religion, race, caste, sex or place of birth",
+                "Article 19: Protection of six rights regarding freedom of speech, assembly, movement, etc.",
+                "Article 21: Protection of life and personal liberty",
+                "Article 21A: Right to free and compulsory education for children aged 6-14",
+                "Article 24: Prohibition of employment of children in factories, etc.",
+                "Article 32: Right to Constitutional remedies for enforcement of Fundamental Rights",
+                "Article 44: Uniform civil code for citizens throughout India",
+                "Article 51A: Fundamental duties of every citizen of India",
+                "Article 368: Power of Parliament to amend the Constitution",
+                "Article 370: Special status to Jammu and Kashmir (Repealed in 2019)",
+                "Article 356: Provisions in case of failure of constitutional machinery in States"
+            ],
+            children: [
+                "Article 21A: Right to free and compulsory education for children aged 6-14",
+                "Article 24: Prohibition of employment of children below 14 years in factories, mines or hazardous work",
+                "Article 39(e): State to ensure children are not abused or forced by economic necessity to enter unsuited occupations",
+                "Article 39(f): State to provide opportunities for healthy development of children",
+                "Article 45: Provision for early childhood care and education to children below 6 years",
+                "Article 51A(k): Duty of parents to provide opportunities for education to their children between 6-14 years",
+                "Article 15(3): Special provisions for children (enabling affirmative action)",
+                "Article 23: Prohibition of traffic in human beings and forced labor (protects children from trafficking)"
+            ],
+            women: [
+                "Article 15(3): Special provisions for women (enabling affirmative action)",
+                "Article 16(2): No discrimination in employment based on sex",
+                "Article 39(a): Right to adequate means of livelihood for men and women equally",
+                "Article 39(d): Equal pay for equal work for both men and women",
+                "Article 42: Provision for just and humane conditions of work and maternity relief",
+                "Article 51A(e): Duty to renounce practices derogatory to the dignity of women",
+                "Article 243D(3): Reservation of seats for women in Panchayats",
+                "Article 243T(3): Reservation of seats for women in Municipalities"
+            ],
+            "young-adults": [
+                "Article 19(1)(a): Freedom of speech and expression",
+                "Article 19(1)(c): Freedom to form associations or unions",
+                "Article 21: Right to privacy (recognized by Supreme Court)",
+                "Article 21A: Right to education (up to 14 years)",
+                "Article 29: Protection of interests of minorities (including cultural and educational rights)",
+                "Article 30: Right of minorities to establish and administer educational institutions",
+                "Article 51A(h): Duty to develop scientific temper, humanism and spirit of inquiry",
+                "Article 51A(j): Duty to strive towards excellence in all spheres of individual and collective activity"
+            ],
+            "fundamental": [
+                "Article 12: Definition of State for Fundamental Rights purposes",
+                "Article 13: Laws inconsistent with or in derogation of Fundamental Rights are void",
+                "Article 14: Equality before law",
+                "Article 15: Prohibition of discrimination",
+                "Article 16: Equality of opportunity in public employment",
+                "Article 17: Abolition of Untouchability",
+                "Article 18: Abolition of titles",
+                "Article 19: Protection of six freedoms",
+                "Article 20: Protection in respect of conviction for offences",
+                "Article 21: Protection of life and personal liberty",
+                "Article 22: Protection against arrest and detention",
+                "Article 23: Prohibition of traffic in human beings and forced labour",
+                "Article 24: Prohibition of child labour"
+            ],
+            "duties": [
+                "Article 51A(a): To abide by the Constitution and respect its ideals and institutions",
+                "Article 51A(b): To cherish and follow the noble ideals of freedom struggle",
+                "Article 51A(c): To uphold and protect sovereignty, unity and integrity of India",
+                "Article 51A(d): To defend the country and render national service when called",
+                "Article 51A(e): To promote harmony and spirit of common brotherhood",
+                "Article 51A(f): To value and preserve rich heritage of composite culture",
+                "Article 51A(g): To protect and improve natural environment",
+                "Article 51A(h): To develop scientific temper, humanism and spirit of inquiry",
+                "Article 51A(i): To safeguard public property and abjure violence",
+                "Article 51A(j): To strive towards excellence in all spheres",
+                "Article 51A(k): To provide education to children between 6-14 years"
+            ]
+        };
+
+        let items = [...articleDatabase.all]; // Default items
+
+        function randomColor() {
+            const colors = [
+                { r: 139, g: 69, b: 19 },   // SaddleBrown (Constitution-like)
+                { r: 210, g: 180, b: 140 }, // Tan (Parchment-like)
+                { r: 244, g: 164, b: 96 },  // SandyBrown
+                { r: 184, g: 134, b: 11 },  // DarkGoldenrod
+                { r: 205, g: 133, b: 63 },  // Peru
+                { r: 139, g: 0, b: 0 },     // DarkRed
+                { r: 85, g: 107, b: 47 },   // DarkOliveGreen
+                { r: 0, g: 100, b: 0 }      // DarkGreen
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function toRad(deg) {
+            return deg * (Math.PI / 180.0);
+        }
+
+        function randomRange(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function easeOutSine(x) {
+            return Math.sin((x * Math.PI) / 2);
+        }
+
+        function getPercent(input, min, max) {
+            return (((input - min) * 100) / (max - min)) / 100;
+        }
+
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const width = document.getElementById("canvas").width;
+        const height = document.getElementById("canvas").height;
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = width / 2;
+
+        let currentDeg = 0;
+        let step = 360 / items.length;
+        let colors = [];
+        let itemDegs = {};
+        let score = 0;
+
+        // Initialize colors for all items
+        for (let i = 0; i < items.length; i++) {
+            colors.push(randomColor());
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw outer circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgb(33, 33, 33)';
+            ctx.fill();
+
+            let startDeg = currentDeg;
+            for (let i = 0; i < items.length; i++) {
+                let endDeg = startDeg + step;
+
+                const color = colors[i];
+                let colorStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
+
+                // Draw wedge
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius - 2, toRad(startDeg), toRad(endDeg));
+                ctx.closePath();
+                ctx.fillStyle = colorStyle;
+                ctx.fill();
+
+                // Draw text
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(toRad((startDeg + endDeg) / 2));
+                ctx.textAlign = "center";
+                ctx.fillStyle = color.r + color.g + color.b > 400 ? "#000" : "#fff";
+                ctx.font = 'bold 16px "Times New Roman", serif';
+                
+                // Display only the article number (e.g., "Article 14")
+                const articleNumber = items[i].split(':')[0];
+                ctx.fillText(articleNumber, radius * 0.7, 5);
+                ctx.restore();
+
+                itemDegs[items[i]] = {
+                    "startDeg": startDeg,
+                    "endDeg": endDeg
+                };
+
+                // Check if this is the winning segment (pointing upwards)
+                if (startDeg % 360 < 360 && startDeg % 360 > 270 && endDeg % 360 > 0 && endDeg % 360 < 90) {
+                    document.getElementById("winner").innerHTML = items[i];
+                }
+
+                startDeg = endDeg;
+            }
+        }
+
+        draw();
+
+        let speed = 0;
+        let maxRotation = randomRange(360 * 3, 360 * 6);
+        let pause = false;
+
+        function animate() {
+            if (pause) {
+                return;
+            }
+            speed = easeOutSine(getPercent(currentDeg, maxRotation, 0)) * 20;
+            if (speed < 0.01) {
+                speed = 0;
+                pause = true;
+                setTimeout(() => {
+                    showQuestionModal(document.getElementById("winner").innerHTML.split(':')[0].trim());
+                }, 500);
+            }
+            currentDeg += speed;
+            draw();
+            window.requestAnimationFrame(animate);
+        }
+
+        function spin() {
+            if (speed != 0) {
+                return;
+            }
+
+            maxRotation = 0;
+            currentDeg = 0;
+            draw();
+
+            // Choose a random item and calculate the rotation needed to land on it
+            const randomItemIndex = Math.floor(Math.random() * items.length);
+            const targetAngle = (360 - (randomItemIndex * step + step/2)) % 360;
+            maxRotation = 360 * 5 + targetAngle; // 5 full rotations plus the target angle
+            
+            itemDegs = {};
+            pause = false;
+            window.requestAnimationFrame(animate);
+        }
+
+        function showQuestionModal(article) {
+            const fullArticle = items.find(item => item.startsWith(article));
+            const articleNumber = fullArticle.split(':')[0];
+            const articleDescription = fullArticle.split(':')[1].trim();
+            
+            document.getElementById("question").textContent = `${articleNumber} states: "${articleDescription}". What is the main concept of this article?`;
+            document.getElementById("overlay").style.display = 'block';
+            document.getElementById("questionModal").style.display = 'block';
+            document.getElementById("userAnswer").focus();
+        }
+
+        function submitAnswer() {
+            const userAnswer = document.getElementById("userAnswer").value.trim().toLowerCase();
+            const article = document.getElementById("winner").textContent.split(':')[0].trim();
+            const correctAnswer = items.find(item => item.startsWith(article)).split(':')[1].trim().toLowerCase();
+            const keywords = correctAnswer.split(' ').filter(word => word.length > 3); // Get important keywords
+
+            // Check if user's answer contains any of the keywords
+            const isCorrect = keywords.some(keyword => userAnswer.includes(keyword.toLowerCase()));
+
+            if (isCorrect) {
+                showAlert("Correct! You've demonstrated good constitutional knowledge. You gain a point.");
+                score++;
+            } else {
+                showAlert(`Incorrect. The correct concept is: ${correctAnswer}. Try to remember this for next time.`);
+                if (score > 0) score--; // Don't go below 0
+            }
+
+            document.getElementById("score").textContent = score;
+            closeModal();
+        }
+
+        function showAlert(message) {
+            document.getElementById("alertMessage").textContent = message;
+            document.getElementById("alertBox").style.display = 'block';
+        }
+
+        function closeAlert() {
+            document.getElementById("alertBox").style.display = 'none';
+        }
+
+        function closeModal() {
+            document.getElementById("overlay").style.display = 'none';
+            document.getElementById("questionModal").style.display = 'none';
+            document.getElementById("userAnswer").value = '';
+        }
+
+        function updateWheelItems() {
+            const selectedFilter = document.getElementById("age-filter").value;
+            items = [...articleDatabase[selectedFilter]];
+            
+            // Reset wheel state
+            currentDeg = 0;
+            speed = 0;
+            pause = false;
+            step = 360 / items.length;
+            colors = [];
+            
+            for (let i = 0; i < items.length; i++) {
+                colors.push(randomColor());
+            }
+            
+            draw();
+            document.getElementById("winner").textContent = `Filter set to ${document.getElementById("age-filter").options[document.getElementById("age-filter").selectedIndex].text}. Spin the wheel!`;
+        }
+    </script>
+</body>
+</html>
